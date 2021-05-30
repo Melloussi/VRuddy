@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="6dp"
+        android:background="@drawable/radius_corner_layout_background">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/fileImage"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/vi"
+
+            app:shapeAppearanceOverlay="@style/leftSideCorner" />
+
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="100dp">
+
+            <LinearLayout
+                android:layout_width="40dp"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/inner_shadow_main_red" />
+
+            <ImageView
+                android:id="@+id/favorite_remove"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/time_black_background"
+                android:padding="2dp"
+                android:src="@drawable/ic_close_24"/>
+
+            <TextView
+                android:id="@+id/favorite_time_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="2dp"
+                android:background="@drawable/time_black_background"
+                android:padding="3dp"
+                android:text="20:23"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:layout_toEndOf="@+id/fileImage"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/favorite_title"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Shape your Image with Circle, Rounded Square, Cuts at corner. Shapeable ImageView in Android Studio"
+                android:textSize="10sp"
+                android:gravity="left"
+                android:textColor="@color/black" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp">
+
+                <ImageView
+                    android:id="@+id/favorite_channel_Image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@color/gray" />
+
+                <TextView
+                    android:id="@+id/favorite_channel_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/favorite_channel_Image"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="By Miss Monique"
+                    android:textColor="@color/DarkGray"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/favorite_views"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="bottom"
+                    android:text="64M"
+                    android:textColor="@color/DarkGray"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/favorite_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="4dp"
+                    android:layout_toRightOf="@+id/favorite_views"
+                    android:gravity="bottom"
+                    android:text="|"
+                    android:textColor="@color/DarkGray"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/favorite_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="4dp"
+                    android:layout_toRightOf="@+id/favorite_b"
+                    android:gravity="bottom"
+                    android:text="1 year ago"
+                    android:textColor="@color/DarkGray"
+                    android:textSize="10sp" />
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="4dp"
+                    android:layout_toRightOf="@+id/favorite_date"
+                    android:src="@drawable/ic_badge"
+                    />
+                <ImageView
+                    android:id="@+id/favorite_download"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_download"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+                <ImageView
+                    android:id="@+id/favorite_share"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_share"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@id/favorite_download"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

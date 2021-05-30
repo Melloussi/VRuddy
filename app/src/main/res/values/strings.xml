@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">VRuddy</string>
+
+    <string name="SearchForMedia">Search for media</string>
+    <string name="TrendingVideos">Trending Videos</string>
+    <string name="RecommendedVideos">Recommended Videos</string>
+    <string name="Music">Music</string>
+    <string name="Video">Video</string>
+    <string name="NoSearchHistoryYet">No Search History yet</string>
+    <string name="VitalMediaDownloader">Vital Media Downloader</string>
+    <string name="InProgress">in progress</string>
+    <string name="PreparingDownloadLinks">Preparing Download Links</string>
+    <string name="DownloadComplete">Download Complete</string>
+    <string name="Permission">VRuddy asking for Storage permission, to have the ability to add media</string>
+    <string name="Ok">Ok</string>
+    <string name="StorageMsg">Please Give Storage Permission!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+</resources>

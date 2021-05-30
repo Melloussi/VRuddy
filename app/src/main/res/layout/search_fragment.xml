@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.SearchFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/home_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/home_bar" />
+        <LinearLayout
+            android:id="@+id/search_suggestion_keywords_result_recycleView_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/suggestion_keywords_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/search_history_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+            <TextView
+                android:id="@+id/no_search_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/NoSearchHistoryYet"
+                android:textSize="23sp"
+                android:layout_centerInParent="true"/>
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_search_24"
+                android:layout_marginBottom="8dp"
+                android:layout_above="@+id/no_search_text"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <FrameLayout
+            android:id="@+id/search_feed_result_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/search_video_nested"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/home_bar">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/home_bar">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/search_result_recycle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/homeVideoShimmer">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="4dp">
+
+                            <include
+                                layout="@layout/home_video_item_shime"/>
+                            <include
+                                layout="@layout/home_video_item_shime"/>
+                            <include
+                                layout="@layout/home_video_item_shime"/>
+
+                        </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                    <ProgressBar
+                        android:id="@+id/search_video_spinner"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_centerInParent="true"
+                        android:layout_below="@id/search_result_recycle"
+                        android:visibility="gone"
+                        android:theme="@style/RedSpinner"/>
+                </RelativeLayout>
+            </androidx.core.widget.NestedScrollView>
+        </FrameLayout>
+    </LinearLayout>
+
+
+</FrameLayout>

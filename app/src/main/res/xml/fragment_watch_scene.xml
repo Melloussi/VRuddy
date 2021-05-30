@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/video_view"
+               motion:framePosition="90"
+               />
+           <KeyAttribute
+               motion:motionTarget="@+id/title_small_version"
+               motion:framePosition="90"
+               android:alpha="0"/>
+           <KeyAttribute
+               motion:motionTarget="@+id/close_small"
+               motion:framePosition="90"
+               android:alpha="0"/>
+           <KeyAttribute
+               motion:motionTarget="@+id/pause_small"
+               motion:framePosition="90"
+               android:alpha="0"/>
+
+       </KeyFrameSet>
+        <OnSwipe motion:touchAnchorId="@+id/video_view" />
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/videoBackgroundView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="6dp"
+            motion:layout_constraintLeft_toLeftOf="parent"
+            motion:layout_constraintRight_toRightOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"/>
+        <Constraint
+            android:id="@+id/video_view"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            motion:layout_constraintBottom_toBottomOf="@id/videoBackgroundView" />
+        <Constraint
+            android:id="@+id/close_small"
+            android:alpha="1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="15dp"
+
+            motion:layout_constraintTop_toTopOf="@id/videoBackgroundView"
+            motion:layout_constraintRight_toRightOf="parent"
+            motion:layout_constraintBottom_toBottomOf="@id/videoBackgroundView"/>
+        <Constraint
+            android:id="@+id/pause_small"
+            android:alpha="1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:gravity="right"
+            motion:layout_constraintTop_toTopOf="@id/videoBackgroundView"
+            motion:layout_constraintLeft_toRightOf="@+id/title_small_version"
+            motion:layout_constraintRight_toLeftOf="@+id/close_small"
+            motion:layout_constraintBottom_toBottomOf="@id/videoBackgroundView"/>
+        <Constraint
+            android:id="@+id/title_small_version"
+            android:alpha="1"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            motion:layout_constraintTop_toTopOf="@id/videoBackgroundView"
+            motion:layout_constraintLeft_toRightOf="@id/video_view"
+            motion:layout_constraintBottom_toBottomOf="@id/videoBackgroundView"/>
+        <Constraint
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintLeft_toLeftOf="parent"
+            motion:layout_constraintRight_toRightOf="parent"
+            android:alpha="0"/>
+        <Constraint
+            android:id="@+id/nested"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintLeft_toLeftOf="parent"
+            motion:layout_constraintRight_toRightOf="parent"
+            android:alpha="0"/>
+        <!--<Constraint
+            android:id="@+id/myNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            motion:layout_constraintRight_toRightOf="parent"
+            motion:layout_constraintLeft_toLeftOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"/>-->
+    </ConstraintSet>
+</MotionScene>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "732489664268",
+    "project_id": "vruddy-13c6b",
+    "storage_bucket": "vruddy-13c6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732489664268:android:cf7281f4ecd5df6506ab29",
+        "android_client_info": {
+          "package_name": "com.app.vruddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732489664268-q33ja3o4obqqnen9eadrb8scm9o3e8lf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.vruddy",
+            "certificate_hash": "119d052150b227a4ae0ff101a78b71bbb332d959"
+          }
+        },
+        {
+          "client_id": "732489664268-vpksqtiomd064qr4u7ob2k1f6pdprj8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf6PpDBCLuUhUy5jlsoXuacJ2attI3tlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732489664268-vpksqtiomd064qr4u7ob2k1f6pdprj8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
