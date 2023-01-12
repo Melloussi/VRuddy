@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_watch_scene"
-    tools:context=".Fragment.WatchFragment">
+    tools:context=".Views.Fragment.WatchFragment">
 
 
     <FrameLayout

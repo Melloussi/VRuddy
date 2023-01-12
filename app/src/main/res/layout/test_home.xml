@@ -4,12 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity"
+    tools:context=".Views.Activities.HomeActivity"
     android:orientation="vertical">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/home_bar"
         android:layout_above="@id/myNav">
         <FrameLayout
         android:id="@+id/homeFragment"
@@ -24,6 +23,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
+<!--    <FrameLayout-->
+<!--        android:id="@+id/container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_above="@id/myNav"/>-->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/myNav"
         android:layout_width="match_parent"

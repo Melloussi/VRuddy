@@ -83,8 +83,6 @@ dependencies {
     implementation 'jp.wasabeef:picasso-transformations:2.1.0'
     //jsoup
     implementation 'org.jsoup:jsoup:1.13.1'
-    //check internet connection library
-    implementation 'com.novoda:merlin:1.2.0'
     //json simple
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     //facebook shimmer effect
@@ -127,5 +125,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
+
+    //merlin: check internet connection library
+    //implementation 'com.novoda:merlin:4.4.4'
+    //implementation 'com.novoda:merlin:1.2.0'
 
 }
