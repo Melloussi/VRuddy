@@ -41,7 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.vruddy.Models.AsyncTask.StreamUrl;
+import com.app.vruddy.Data.Background.AsyncTask.StreamUrl;
 import com.app.vruddy.Models.DecryptCipher.DecryptCipher;
 import com.app.vruddy.Models.DecryptCipher.ResultCallBack;
 import com.app.vruddy.Models.DecryptCipher.StreamResultCallBack;
@@ -52,8 +52,8 @@ import com.app.vruddy.Models.Objects.VideoStreamObject;
 import com.app.vruddy.R;
 import com.app.vruddy.Views.Adapter.RelatedVideoAdapter;
 import com.app.vruddy.Views.Activities.HomeActivity;
-import com.app.vruddy.Models.AsyncTask.getRelatedVideoData;
-import com.app.vruddy.Models.AsyncTask.getVideoStreamLink;
+import com.app.vruddy.Data.Background.AsyncTask.getRelatedVideoData;
+import com.app.vruddy.Data.Background.AsyncTask.getVideoStreamLink;
 import com.app.vruddy.Data.database.Cipher.CipherViewModel;
 import com.app.vruddy.Data.database.Favorite.Favorite;
 import com.app.vruddy.Data.database.Favorite.FavoriteIndex;
@@ -69,50 +69,51 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link WatchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WatchFragment extends Fragment {
 
     //Variables
     private TextView textTitle;
     private TextView textViews;
     private TextView textDate;
-    private ImageView channelPic;
-    private ImageView heartPic;
-    private ImageView downloadPic;
-    private ImageView sharePic;
+    private TextView titleSmallVersion;
+
+
+    private ImageView
+            channelPic,
+            heartPic,
+            downloadPic,
+            sharePic,
+            closeImg,
+            pauseImg,
+            fullScreeen,
+            downloadWindowThumbnail;
+
     private YouTubePlayerView youTubePlayerView;
     private boolean isThereData = false;
     private boolean screenState = false;
-    private ImageView closeImg;
-    private ImageView pauseImg;
-    private TextView titleSmallVersion;
+
 
     //just for test -----------------
-    private ArrayList<String> thumbnailUrl = new ArrayList<>();
-    private ArrayList<String> videoTitleList = new ArrayList<>();
-    private ArrayList<String> viewsInfo = new ArrayList<>();
-    private ArrayList<String> showTime = new ArrayList<>();
-    private ArrayList<String> dateInfo = new ArrayList<>();
-    private ArrayList<String> channelNameList = new ArrayList<>();
-    private ArrayList<String> channelImgUrl = new ArrayList<>();
-    private ArrayList<Integer> heartIcon = new ArrayList<>();
-    private ArrayList<Integer> DownloadIcon = new ArrayList<>();
-    private ArrayList<Integer> badgeIcon = new ArrayList<>();
+//    private ArrayList<String> thumbnailUrl = new ArrayList<>();
+//    private ArrayList<String> videoTitleList = new ArrayList<>();
+//    private ArrayList<String> viewsInfo = new ArrayList<>();
+//    private ArrayList<String> showTime = new ArrayList<>();
+//    private ArrayList<String> dateInfo = new ArrayList<>();
+//    private ArrayList<String> channelNameList = new ArrayList<>();
+//    private ArrayList<String> channelImgUrl = new ArrayList<>();
+//    private ArrayList<Integer> heartIcon = new ArrayList<>();
+//    private ArrayList<Integer> DownloadIcon = new ArrayList<>();
+//    private ArrayList<Integer> badgeIcon = new ArrayList<>();
 
     private PlayerView playerView;
     private static ProgressBar progressBar;
-    private ImageView fullScreeen;
+
     private SimpleExoPlayer player;
     private static boolean isVideoReady = false;
     private static boolean isRelatedVideoLoaded = false;
@@ -124,7 +125,7 @@ public class WatchFragment extends Fragment {
     private static Dialog downloadWindow;
     private static TextView downloadWindowTitle;
     private static TextView downloadWindowTime;
-    private static ImageView downloadWindowThumbnail;
+
 
     private static getRelatedVideoData getData;
 
@@ -224,20 +225,9 @@ public class WatchFragment extends Fragment {
     private static FavoriteIndex favoriteIndex;
     private static RelatedVideoAdapter relatedVideoAdapter;
     private static FavoriteViewModel favoriteViewModel;
+    private static View view;
 
-    public WatchFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment WatchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    public WatchFragment() {}
     public static WatchFragment newInstance(String param1, String param2) {
         WatchFragment fragment = new WatchFragment();
         Bundle args = new Bundle();
@@ -291,7 +281,7 @@ public class WatchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup containerA, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_watch, containerA, false);
+        view = inflater.inflate(R.layout.fragment_watch, containerA, false);
 
 
         //
@@ -828,10 +818,8 @@ public class WatchFragment extends Fragment {
      * This Method For Listening on MotionLayout changes
      * the purpose of this method is to send signal to (resizeWatchFragment) method that exist in (HomeActivity) activity
      * to minimize and maximize this fragment layout
-     *
-     * @param view
      */
-    public void motionLayoutTransitionListener(View view) {
+    public void motionLayoutTransitionListener(View vieww) {
         MotionLayout motionLayout = view.findViewById(R.id.watchVideoMotionLayout);
         motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
             @Override

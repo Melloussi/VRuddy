@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.vruddy.Views.Adapter.FavoriteAdapter;
-import com.app.vruddy.Models.AsyncTask.getVideoStreamLink;
+import com.app.vruddy.Data.Background.AsyncTask.getVideoStreamLink;
 import com.app.vruddy.Models.DecryptCipher.DecryptCipher;
 import com.app.vruddy.Models.DecryptCipher.ResultCallBack;
 import com.app.vruddy.Models.Interfaces.FetchDownloadingLinksCallback;

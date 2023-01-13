@@ -1,4 +1,4 @@
-package com.app.vruddy.Models;
+package com.app.vruddy.Data.Background;
 
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;

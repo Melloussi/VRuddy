@@ -4,7 +4,6 @@ import static com.app.vruddy.Data.Global.GlobalConstantVariables.*;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -38,9 +37,9 @@ import android.widget.Toast;
 import com.app.vruddy.Data.DataClasses.QualityAvailability;
 import com.app.vruddy.Data.DataClasses.QualityDownloadLink;
 import com.app.vruddy.Views.Adapter.HomeVideoAdapter;
-import com.app.vruddy.Models.AsyncTask.TrendingDataRequest;
+import com.app.vruddy.Data.Background.AsyncTask.TrendingDataRequest;
 import com.app.vruddy.Views.Adapter.MyRecycle;
-import com.app.vruddy.Models.AsyncTask.getVideoStreamLink;
+import com.app.vruddy.Data.Background.AsyncTask.getVideoStreamLink;
 import com.app.vruddy.Models.DecryptCipher.DecryptCipher;
 import com.app.vruddy.Models.DecryptCipher.ResultCallBack;
 import com.app.vruddy.Models.Interfaces.FetchDownloadingLinksCallback;
@@ -53,7 +52,7 @@ import com.app.vruddy.Data.database.Cipher.CipherViewModel;
 import com.app.vruddy.Data.database.Favorite.Favorite;
 import com.app.vruddy.Data.database.Favorite.FavoriteIndex;
 import com.app.vruddy.Data.database.Favorite.FavoriteViewModel;
-import com.app.vruddy.Models.AsyncTask.getHomeVideo;
+import com.app.vruddy.Data.Background.AsyncTask.getHomeVideo;
 import com.app.vruddy.Data.Background.Services.testService;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -143,7 +142,7 @@ public class HomeFragment extends Fragment implements TestCallBack {
 
     private static FavoriteIndex favoriteIndex;
 
-    private HomeActivity homeActivity;
+    private static HomeActivity homeActivity;
 
 
 
@@ -328,6 +327,8 @@ public class HomeFragment extends Fragment implements TestCallBack {
 
     private void openFragment(boolean IsFirstTime, WatchFragment watchFragment) {
         if (IsFirstTime) {
+            System.out.println("----> activity: "+homeActivity);
+            System.out.println("----> manager: "+homeActivity.manager);
             homeActivity.manager.fragmentManager(WATCH_FRAGMENT, watchFragment);
             isFirstTime = false;
         } else {

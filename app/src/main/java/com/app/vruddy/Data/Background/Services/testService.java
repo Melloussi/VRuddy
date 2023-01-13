@@ -21,7 +21,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.app.vruddy.Data.Background.Timer;
-import com.app.vruddy.Models.DownloadThreadPool;
+import com.app.vruddy.Data.Background.DownloadThreadPool;
 import com.app.vruddy.R;
 import com.app.vruddy.Views.Activities.HomeActivity;
 import com.downloader.OnCancelListener;

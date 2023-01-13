@@ -1,4 +1,4 @@
-package com.app.vruddy.Models.AsyncTask;
+package com.app.vruddy.Data.Background.AsyncTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
