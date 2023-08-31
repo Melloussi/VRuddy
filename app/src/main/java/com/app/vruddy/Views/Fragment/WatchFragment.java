@@ -50,6 +50,7 @@ import com.app.vruddy.Models.Interfaces.RelatedResultCallBack;
 import com.app.vruddy.Models.Objects.VideoObject;
 import com.app.vruddy.Models.Objects.VideoStreamObject;
 import com.app.vruddy.R;
+import com.app.vruddy.ViewModels.WatchVM;
 import com.app.vruddy.Views.Adapter.RelatedVideoAdapter;
 import com.app.vruddy.Views.Activities.HomeActivity;
 import com.app.vruddy.Data.Background.AsyncTask.getRelatedVideoData;
@@ -176,9 +177,9 @@ public class WatchFragment extends Fragment {
     private static boolean isSmallFound = false;
     private static boolean isMediumFound = false;
     private static boolean isLargeFound = false;
-    private static boolean isPermissionGranted = false;
-    private static boolean sleep = true;
-    private static boolean isPermissionResponse = false;
+    private static final boolean isPermissionGranted = false;
+    private static final boolean sleep = true;
+    private static final boolean isPermissionResponse = false;
 
     private static String p240DownloadLink;
     private static String p360DownloadLink;
@@ -225,7 +226,12 @@ public class WatchFragment extends Fragment {
     private static FavoriteIndex favoriteIndex;
     private static RelatedVideoAdapter relatedVideoAdapter;
     private static FavoriteViewModel favoriteViewModel;
+    private static WatchVM watchVM;
     private static View view;
+
+    private Boolean isArgumentsNull = true;
+
+
 
     public WatchFragment() {}
     public static WatchFragment newInstance(String param1, String param2) {
@@ -237,9 +243,85 @@ public class WatchFragment extends Fragment {
         return fragment;
     }
 
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+////        if (getArguments() != null) {
+////            From = getArguments().getString("from");
+////            videoId = getArguments().getString("video_id");
+////            VideoThumbnail = getArguments().getString("video_thumbnail");
+////            VideoTitle = getArguments().getString("video_title");
+////            VideoViews = getArguments().getString("video_views");
+////            VideoDate = getArguments().getString("video_date");
+////            VideoTime = getArguments().getString("video_time");
+////            ChannelName = getArguments().getString("channel_name");
+////            ChannelPic = getArguments().getString("channel_pic");
+////            isArgumentsNull = false;
+////        }else {
+////            isArgumentsNull = true;
+////        }
+////
+////        //I Set Value true cause when back button pressed
+////        //I check Which Fragment is opened to close it
+////        homeActivity = (HomeActivity) getActivity();
+////        homeActivity.setWatchFragmentOpen(true);
+////
+////        cipherViewModel = new ViewModelProvider(
+////                this, ViewModelProvider
+////                .AndroidViewModelFactory
+////                .getInstance(getActivity()
+////                        .getApplication()))
+////                .get(CipherViewModel.class);
+////
+////        favoriteViewModel = new ViewModelProvider(
+////                this, ViewModelProvider
+////                .AndroidViewModelFactory
+////                .getInstance(getActivity().getApplication()))
+////                .get(FavoriteViewModel.class);
+////
+////        favoriteIndex = FavoriteIndex.getInstance();
+////
+////        activity = getActivity();
+//
+//
+//    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup containerA, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+        view = inflater.inflate(R.layout.fragment_watch, containerA, false);
+
+
+        homeActivity = (HomeActivity) getActivity();
+
+        watchVM = new ViewModelProvider(
+                this, ViewModelProvider
+                .AndroidViewModelFactory
+                .getInstance(getActivity().getApplication()))
+                .get(WatchVM.class);
+
+
+        context = getActivity();
+        downloadWindow = new Dialog(context);
+
+        textTitle = view.findViewById(R.id.mainVideoTitle);
+        textViews = view.findViewById(R.id.viewsText);
+        textDate = view.findViewById(R.id.dateText);
+        TextView textChannelName = view.findViewById(R.id.channelName);
+        channelPic = view.findViewById(R.id.chennelPic);
+        heartPic = view.findViewById(R.id.addTofavo);
+        downloadPic = view.findViewById(R.id.download);
+        sharePic = view.findViewById(R.id.share);
+        titleSmallVersion = view.findViewById(R.id.title_small_version);
+
+        pauseImg = view.findViewById(R.id.pause_small);
+        closeImg = view.findViewById(R.id.close_small);
+        motionLayout = view.findViewById(R.id.watchVideoMotionLayout);
+
+
+        //--------------------------------
+
         if (getArguments() != null) {
             From = getArguments().getString("from");
             videoId = getArguments().getString("video_id");
@@ -250,11 +332,13 @@ public class WatchFragment extends Fragment {
             VideoTime = getArguments().getString("video_time");
             ChannelName = getArguments().getString("channel_name");
             ChannelPic = getArguments().getString("channel_pic");
+            isArgumentsNull = false;
+        }else {
+            isArgumentsNull = true;
         }
 
         //I Set Value true cause when back button pressed
         //I check Which Fragment is opened to close it
-        homeActivity = (HomeActivity) getActivity();
         homeActivity.setWatchFragmentOpen(true);
 
         cipherViewModel = new ViewModelProvider(
@@ -274,14 +358,7 @@ public class WatchFragment extends Fragment {
 
         activity = getActivity();
 
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup containerA, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        view = inflater.inflate(R.layout.fragment_watch, containerA, false);
+        //-------------------------------
 
 
         //
@@ -300,21 +377,7 @@ public class WatchFragment extends Fragment {
         });
 
 
-        context = getActivity();
-        downloadWindow = new Dialog(context);
 
-        textTitle = view.findViewById(R.id.mainVideoTitle);
-        textViews = view.findViewById(R.id.viewsText);
-        textDate = view.findViewById(R.id.dateText);
-        TextView textChannelName = view.findViewById(R.id.channelName);
-        channelPic = view.findViewById(R.id.chennelPic);
-        heartPic = view.findViewById(R.id.addTofavo);
-        downloadPic = view.findViewById(R.id.download);
-        sharePic = view.findViewById(R.id.share);
-        titleSmallVersion = view.findViewById(R.id.title_small_version);
-        pauseImg = view.findViewById(R.id.pause_small);
-        closeImg = view.findViewById(R.id.close_small);
-        motionLayout = view.findViewById(R.id.watchVideoMotionLayout);
 
 
         //---------- I need to know why I added this part of code below
@@ -345,16 +408,18 @@ public class WatchFragment extends Fragment {
 //            channelPicUrl = getIntent().getStringExtra("channel_pic");
 //        }
 
-        //pass data to the main video
-        titleSmallVersion.setText(VideoTitle);
-        textTitle.setText(VideoTitle);
-        textViews.setText(VideoViews);
-        textDate.setText(VideoDate);
-        textChannelName.setText(ChannelName);
-        Picasso.get()
-                .load(ChannelName)
-                .transform(new CropCircleTransformation())
-                .into(channelPic);
+        if(textTitle != null){
+            //pass data to the main video
+            titleSmallVersion.setText(VideoTitle);
+            textTitle.setText(VideoTitle);
+            textViews.setText(VideoViews);
+            textDate.setText(VideoDate);
+            textChannelName.setText(ChannelName);
+            Picasso.get()
+                    .load(ChannelName)
+                    .transform(new CropCircleTransformation())
+                    .into(channelPic);
+        }
 
 
         //----------------------------------------------------------------------------------------
@@ -363,7 +428,17 @@ public class WatchFragment extends Fragment {
         playerView = view.findViewById(R.id.video_view);
         progressBar = view.findViewById(R.id.pB);
         fullScreeen = view.findViewById(R.id.btn_fullscreen);
-        player = new SimpleExoPlayer.Builder(activity).build();
+
+//        player = new SimpleExoPlayer.Builder(activity).build();
+        player = watchVM.getExoPlayer();
+        int test = watchVM.getTest();
+        System.out.println("--------------- WatchVM Test: "+test);
+        System.out.println("--------------- WatchVM Player: "+player);
+        if (player == null ){
+            player = new SimpleExoPlayer.Builder(activity).build();
+            watchVM.setExoPlayer(player);
+            watchVM.setTest(1);
+        }
 
         //get watch Stream link
         try {
@@ -414,12 +489,17 @@ public class WatchFragment extends Fragment {
                             //keep screen on
                             playerView.setKeepScreenOn(true);
 
-                            // Build the media item.
-                            MediaItem mediaItem = MediaItem.fromUri(videoUrl);
-                            // Set the media item to be played.
-                            player.setMediaItem(mediaItem);
-                            // Prepare the player.
-                            player.prepare();
+                            if(test == 0){
+                                // Build the media item.
+                                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+                                // Set the media item to be played.
+                                player.setMediaItem(mediaItem);
+                                // Prepare the player.
+                                player.prepare();
+                                System.out.println("Preeeeeeeeeeeeeeeeer");
+                            }else {
+                                System.out.println("------------- Prer else");
+                            }
 
                             try {
                                 // Start the playback.
@@ -478,6 +558,7 @@ public class WatchFragment extends Fragment {
 //                }
                                     //-------------------------------------------------------
 
+                                    ViewGroup.LayoutParams params;
                                     if (screenState) {
                                         fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen));
                                         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
@@ -486,12 +567,16 @@ public class WatchFragment extends Fragment {
                                         }
                                         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                                         //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) playerView.getLayoutParams();
-                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerView.getLayoutParams();
+//                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerView.getLayoutParams();
+                                        params =  playerView.getLayoutParams();
 
-                                        params.width = params.MATCH_PARENT;
+                                        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                                         params.height = (int) (200 * getActivity().getResources().getDisplayMetrics().density);
                                         playerView.setLayoutParams(params);
                                         screenState = false;
+
+
+                                        homeActivity.setBottomNaveVisibility(false);
                                     } else {
                                         fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen_exit));
                                         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -501,12 +586,14 @@ public class WatchFragment extends Fragment {
                                             ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                                         }
                                         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerView.getLayoutParams();
-                                        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) playerView.getLayoutParams();
-                                        params.width = params.MATCH_PARENT;
-                                        params.height = params.MATCH_PARENT;
+
+                                        params = playerView.getLayoutParams();
+
+                                        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                                        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                                         playerView.setLayoutParams(params);
                                         screenState = true;
+                                        homeActivity.setBottomNaveVisibility(true);
                                     }
                                 }
                             });
@@ -543,113 +630,114 @@ public class WatchFragment extends Fragment {
 
         //Shimmer
         ShimmerFrameLayout containerB =
-                (ShimmerFrameLayout) view.findViewById(R.id.shimmer);
-        containerB.startShimmer();
+                view.findViewById(R.id.shimmer);
+        if(containerB != null){
+            containerB.startShimmer();
 
-        getData = new getRelatedVideoData(new RelatedResultCallBack() {
-            @Override
-            public void result(List<VideoObject> videoObjectList) {
+            getData = new getRelatedVideoData(new RelatedResultCallBack() {
+                @Override
+                public void result(List<VideoObject> videoObjectList) {
 
-                System.out.println("Data arrived");
+                    System.out.println("Data arrived");
 
-                //start test ---------------------------------------------
+                    //start test ---------------------------------------------
 
-                activity.runOnUiThread(new Runnable() {
+                    activity.runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
+                        @Override
+                        public void run() {
 
-                        containerB.stopShimmer();
-                        containerB.setVisibility(View.GONE);
-
-
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                        RecyclerView recyclerView = view.findViewById(R.id.relatedVideoRecycle);
-                        NestedScrollView nestedScrollView = view.findViewById(R.id.nested);
-                        //
-                        recyclerView.setFocusable(false);
-                        recyclerView.setNestedScrollingEnabled(false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-
-                        System.out.println("----------- Size of watch videoObjectList: " + videoObjectList.size());
-
-                        relatedVideoAdapter = new RelatedVideoAdapter(videoObjectList, getData.getIsLive());
-
-                        recyclerView.setAdapter(relatedVideoAdapter);
-
-                        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                            @Override
-                            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight() & isRelatedVideoLoaded != true) {
-
-                                    System.out.println("77777777777777777777777777777777777");
-                                    System.out.println("I'm in the last index");
-                                    System.out.println("77777777777777777777777777777777777");
-                                    isRelatedVideoLoaded = true;
-                                    containerB.startShimmer();
-                                    containerB.setVisibility(View.VISIBLE);
-
-                                    int listSize = getData.getChannelImgUrl().size();
-                                    getData.moreData();
-
-                                    Timer timer1 = new Timer();
-                                    timer1.schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            System.out.println("note yet");
-                                            if (listSize < getData.getBadgeIcon().size()) {
-
-                                                getActivity().runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        // Stuff that updates the UI
-                                                        System.out.println("I get data");
-                                                        System.out.println("orignal list size: " + listSize);
-                                                        System.out.println("current list size: " + getData.getChannelImgUrl().size());
-                                                        int rr = getData.getChannelImgUrl().size() - listSize;
-                                                        System.out.println("how many data added: " + rr);
+                            containerB.stopShimmer();
+                            containerB.setVisibility(View.GONE);
 
 
-                                                        //relatedVideoAdapter.notifyDataSetChanged();
-                                                        //notifyItemRangeInserted(insertIndex, items.size());
-                                                        containerB.stopShimmer();
-                                                        containerB.setVisibility(View.GONE);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                            RecyclerView recyclerView = view.findViewById(R.id.relatedVideoRecycle);
+                            NestedScrollView nestedScrollView = view.findViewById(R.id.nested);
+                            //
+                            recyclerView.setFocusable(false);
+                            recyclerView.setNestedScrollingEnabled(false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
 
-                                                        relatedVideoAdapter.notifyItemRangeInserted(getData.getVideoId().size(), getData.getVideoId().size() - listSize);
-                                                        isRelatedVideoLoaded = false;
-                                                    }
-                                                });
-                                                timer1.cancel();
+                            System.out.println("----------- Size of watch videoObjectList: " + videoObjectList.size());
+
+                            relatedVideoAdapter = new RelatedVideoAdapter(videoObjectList, getData.getIsLive());
+
+                            recyclerView.setAdapter(relatedVideoAdapter);
+
+                            nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                                @Override
+                                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight() & isRelatedVideoLoaded != true) {
+
+                                        System.out.println("77777777777777777777777777777777777");
+                                        System.out.println("I'm in the last index");
+                                        System.out.println("77777777777777777777777777777777777");
+                                        isRelatedVideoLoaded = true;
+                                        containerB.startShimmer();
+                                        containerB.setVisibility(View.VISIBLE);
+
+                                        int listSize = getData.getChannelImgUrl().size();
+                                        getRelatedVideoData.moreData();
+
+                                        Timer timer1 = new Timer();
+                                        timer1.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                System.out.println("note yet");
+                                                if (listSize < getData.getBadgeIcon().size()) {
+
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            // Stuff that updates the UI
+                                                            System.out.println("I get data");
+                                                            System.out.println("orignal list size: " + listSize);
+                                                            System.out.println("current list size: " + getData.getChannelImgUrl().size());
+                                                            int rr = getData.getChannelImgUrl().size() - listSize;
+                                                            System.out.println("how many data added: " + rr);
+
+
+                                                            //relatedVideoAdapter.notifyDataSetChanged();
+                                                            //notifyItemRangeInserted(insertIndex, items.size());
+                                                            containerB.stopShimmer();
+                                                            containerB.setVisibility(View.GONE);
+
+                                                            relatedVideoAdapter.notifyItemRangeInserted(getData.getVideoId().size(), getData.getVideoId().size() - listSize);
+                                                            isRelatedVideoLoaded = false;
+                                                        }
+                                                    });
+                                                    timer1.cancel();
+                                                }
                                             }
-                                        }
-                                    }, 0, 1000);
-                                    //relatedVideoAdapter.notifyDataSetChanged();
+                                        }, 0, 1000);
+                                        //relatedVideoAdapter.notifyDataSetChanged();
 
-                                }
-                            }
-                        });
-
-                        relatedVideoAdapter.setOnItemClickListener(new RelatedVideoAdapter.onItemClickListener() {
-                            @Override
-                            public void onHeartClick(int position) {
-                                //
-                                addToFavorite(videoObjectList.get(position));
-                            }
-
-                            @Override
-                            public void onItemClick(int position) {
-                                //System.out.println(getData.getVideoTitle().get(position));
-                                if (getData.getVideoTitle().size() != 0) {
-                                    //System.out.println("You clicked on me: "+ getData.getVideoId().get(position));
-
-
-                                    if (isVideoReady) {
-                                        //playerView.onPause();
-                                        player.stop(true);
-                                        player.clearMediaItems();
                                     }
+                                }
+                            });
 
-                                    //refresh activity with new data by starting new intent
+                            relatedVideoAdapter.setOnItemClickListener(new RelatedVideoAdapter.onItemClickListener() {
+                                @Override
+                                public void onHeartClick(int position) {
+                                    //
+                                    addToFavorite(videoObjectList.get(position));
+                                }
+
+                                @Override
+                                public void onItemClick(int position) {
+                                    //System.out.println(getData.getVideoTitle().get(position));
+                                    if (getData.getVideoTitle().size() != 0) {
+                                        //System.out.println("You clicked on me: "+ getData.getVideoId().get(position));
+
+
+                                        if (isVideoReady) {
+                                            //playerView.onPause();
+                                            player.stop(true);
+                                            player.clearMediaItems();
+                                        }
+
+                                        //refresh activity with new data by starting new intent
 //                                        Intent intent = new Intent(getActivity(), watch.class);
 //                                        intent.putExtra("from", "Watch");
 //                                        intent.putExtra("video_id", getData.getVideoId().get(position));
@@ -661,7 +749,7 @@ public class WatchFragment extends Fragment {
 //                                        intent.putExtra("channel_name", getData.getChannelName().get(position));
 //                                        intent.putExtra("channel_pic",  getData.getChannelImgUrl().get(position));
 
-                                    //clear data
+                                        //clear data
 //                                        getData.getVideoId().clear();
 //                                        getData.getThumbnailUrl().clear();
 //                                        getData.getVideoTitle().clear();
@@ -680,75 +768,78 @@ public class WatchFragment extends Fragment {
 //                                        getActivity().finish();
 
 
-                                    openWatchFragment(position);
+                                        openWatchFragment(position);
+
+                                    }
 
                                 }
 
-                            }
-
-                            @Override
-                            public void onDownloadClick(int position) {
-                                if (HomeActivity.isPermission) {
-                                    getVideoStreamLink downloadUrls = new getVideoStreamLink(activity, new FetchDownloadingLinksCallback() {
-                                        @Override
-                                        public void callback(List<VideoStreamObject> videoStreamObjectList) {
-                                            //
-                                            System.out.println("------- Down Called");
-                                            generateDownloadingOption(videoObjectList.get(position), videoStreamObjectList);
-                                        }
-                                    });
-                                    downloadUrls.execute("https://www.youtube.com/watch?v=" + videoObjectList.get(position).getVideoId());
-                                    createDownloadDialog(new VideoObject(getData.getVideoId().get(position), getData.getVideoTitle().get(position), "", getData.getShowTime().get(position), "", "", false, getData.getThumbnailUrl().get(position), ""));
-                                } else {
-                                    Toast.makeText(getContext(), R.string.StorageMsg, Toast.LENGTH_LONG).show();
+                                @Override
+                                public void onDownloadClick(int position) {
+                                    if (HomeActivity.isPermission) {
+                                        getVideoStreamLink downloadUrls = new getVideoStreamLink(activity, new FetchDownloadingLinksCallback() {
+                                            @Override
+                                            public void callback(List<VideoStreamObject> videoStreamObjectList) {
+                                                //
+                                                System.out.println("------- Down Called");
+                                                generateDownloadingOption(videoObjectList.get(position), videoStreamObjectList);
+                                            }
+                                        });
+                                        downloadUrls.execute("https://www.youtube.com/watch?v=" + videoObjectList.get(position).getVideoId());
+                                        createDownloadDialog(new VideoObject(getData.getVideoId().get(position), getData.getVideoTitle().get(position), "", getData.getShowTime().get(position), "", "", false, getData.getThumbnailUrl().get(position), ""));
+                                    } else {
+                                        Toast.makeText(getContext(), R.string.StorageMsg, Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
 
+                        }
+                    });
+
+                    //end of test --------------------------------------------
+                    isThereData = true;
+
+                }
+            });
+            getData.execute("https://www.youtube.com/watch?v=" + videoId);
+
+
+            isThereData = false;
+
+            pauseImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (player.isPlaying()) {
+                        player.pause();
+                        pauseImg.setImageResource(R.drawable.ic_play_small_version);
+                    } else {
+                        player.play();
+                        pauseImg.setImageResource(R.drawable.ic_pause_small_version);
                     }
-                });
-
-                //end of test --------------------------------------------
-                isThereData = true;
-
-            }
-        });
-        getData.execute("https://www.youtube.com/watch?v=" + videoId);
-
-
-        isThereData = false;
-
-        pauseImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (player.isPlaying()) {
-                    player.pause();
-                    pauseImg.setImageResource(R.drawable.ic_play_small_version);
-                } else {
-                    player.play();
-                    pauseImg.setImageResource(R.drawable.ic_pause_small_version);
                 }
-            }
-        });
-        closeImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            });
+            closeImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                //Check if video playing make it pause before hide the layout
-                if (player.isPlaying()) {
-                    player.pause();
+                    //Check if video playing make it pause before hide the layout
+                    if (player.isPlaying()) {
+                        player.pause();
+                    }
+                    //motionLayout.setAlpha(0);
+                    ((HomeActivity) getActivity()).manager.resizeWatchFragment(0);
+                    motionLayout.setProgress((float) 0.0);
+                    isNeedToMaximize = false;
+                    ((HomeActivity) getActivity()).frameLayoutVisibility();
+
+                    System.out.println("------ Close Button Clicked");
                 }
-                //motionLayout.setAlpha(0);
-                ((HomeActivity) getActivity()).manager.resizeWatchFragment(0);
-                motionLayout.setProgress((float) 0.0);
-                isNeedToMaximize = false;
-                ((HomeActivity) getActivity()).frameLayoutVisibility();
+            });
 
-                System.out.println("------ Close Button Clicked");
-            }
-        });
+            favoriteData();
+        }
 
-        favoriteData();
+
 
         return view;
     }
@@ -757,7 +848,7 @@ public class WatchFragment extends Fragment {
         favoriteViewModel.getAllFavorites().observe(getActivity(), new Observer<List<Favorite>>() {
             @Override
             public void onChanged(List<Favorite> favorites) {
-                favoriteIndex.passIds(favorites);
+                FavoriteIndex.passIds(favorites);
                 if (relatedVideoAdapter != null) {
                     relatedVideoAdapter.notifyDataSetChanged();
                 }
@@ -766,7 +857,7 @@ public class WatchFragment extends Fragment {
     }
 
     private void addToFavorite(VideoObject videoObject) {
-        if (favoriteIndex.Id(videoObject.getVideoId())) {
+        if (FavoriteIndex.Id(videoObject.getVideoId())) {
             deleteFromFavorite(videoObject);
         } else {
             favoriteViewModel.insert(new Favorite(videoObject));
@@ -777,7 +868,7 @@ public class WatchFragment extends Fragment {
     }
 
     private void deleteFromFavorite(VideoObject videoObject) {
-        favoriteIndex.removeId(videoObject.getVideoId());
+        FavoriteIndex.removeId(videoObject.getVideoId());
         favoriteViewModel.deleteById(videoObject.getVideoId());
 
         Toast toast = Toast.makeText(activity, "Item deleted from Favorite List", Toast.LENGTH_SHORT);

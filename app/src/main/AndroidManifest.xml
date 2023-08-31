@@ -38,7 +38,8 @@
 <!--            android:name="com.novoda.merlin.MerlinService"-->
 <!--            android:exported="false" />-->
 
-        <activity android:name="com.app.vruddy.Views.Activities.MainActivity">
+        <activity android:name="com.app.vruddy.Views.Activities.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

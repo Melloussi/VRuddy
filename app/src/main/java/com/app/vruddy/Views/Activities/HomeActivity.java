@@ -117,11 +117,13 @@ public class HomeActivity extends AppCompatActivity implements FileHandler {
         mBackPressed = System.currentTimeMillis();
     }
 
+    private BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_home);
+        setContentView(R.layout.home_activity);
         changeTopBarColor();
 
         createNotificationChannel();
@@ -136,7 +138,7 @@ public class HomeActivity extends AppCompatActivity implements FileHandler {
 
         manager.fragmentManager(HOME_FRAGMENT);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.myNav);
+        bottomNavigationView = findViewById(R.id.myNav);
         //navFunction();
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
@@ -149,6 +151,14 @@ public class HomeActivity extends AppCompatActivity implements FileHandler {
                 fileList = inProgressFiles;
             }
         });
+    }
+
+    public void setBottomNaveVisibility(Boolean visibility){
+        if(visibility){
+            bottomNavigationView.setVisibility(View.GONE);
+        }else {
+            bottomNavigationView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void changeTopBarColor() {
