@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.motion.widget.MotionLayout;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.widget.NestedScrollView;
@@ -70,6 +69,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -78,60 +78,50 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class WatchFragment extends Fragment {
 
-    //Variables
-    private TextView textTitle;
-    private TextView textViews;
-    private TextView textDate;
-    private TextView titleSmallVersion;
+
+    private static class UIComponents {
+        private TextView textTitle, textViews, textDate, titleSmallVersion, textChannelName,
+                downloadWindowTitle, downloadWindowTime, p240MbSize, p360MbSize,
+                p480MbSize, p720MbSize, p1080MbSize, p1440MbSize, k4MbSize, tinyMbSize,
+                smallMbSize, mediumMbSize, largeMbSize, tinyBitrateSize, smallBitrateSize,
+                mediumBitrateSize, largeBitrateSize;
 
 
-    private ImageView
-            channelPic,
-            heartPic,
-            downloadPic,
-            sharePic,
-            closeImg,
-            pauseImg,
-            fullScreeen,
-            downloadWindowThumbnail;
+        private ImageView channelPic, heartPic, downloadPic, sharePic,
+                closeImg, pauseImg, fullScreeen, downloadWindowThumbnail;
 
-    private YouTubePlayerView youTubePlayerView;
+        private CardView k4Card, p1440Card, p1080Card, p720Card, p480Card,
+                p360Card, p240Card, largeCard, mediumCard, smallCard, tinyCard;
+
+        private LinearLayout download_links_layout;
+
+        private RelativeLayout p240, p360, p480, p720, p1080, p1440, k4,
+                waiting_download_links_spinner_layout, tiny, small,
+                medium, large;
+
+        private ProgressBar progressBar;
+        private MotionLayout motionLayout;
+
+        private YouTubePlayerView youTubePlayerView;
+        private PlayerView playerView;
+
+        private ShimmerFrameLayout containerB;
+
+    }
+
+    private final UIComponents uiComponents = new UIComponents();
+    private SimpleExoPlayer player;
     private boolean isThereData = false;
     private boolean screenState = false;
-
-
-    //just for test -----------------
-//    private ArrayList<String> thumbnailUrl = new ArrayList<>();
-//    private ArrayList<String> videoTitleList = new ArrayList<>();
-//    private ArrayList<String> viewsInfo = new ArrayList<>();
-//    private ArrayList<String> showTime = new ArrayList<>();
-//    private ArrayList<String> dateInfo = new ArrayList<>();
-//    private ArrayList<String> channelNameList = new ArrayList<>();
-//    private ArrayList<String> channelImgUrl = new ArrayList<>();
-//    private ArrayList<Integer> heartIcon = new ArrayList<>();
-//    private ArrayList<Integer> DownloadIcon = new ArrayList<>();
-//    private ArrayList<Integer> badgeIcon = new ArrayList<>();
-
-    private PlayerView playerView;
-    private static ProgressBar progressBar;
-
-    private SimpleExoPlayer player;
     private static boolean isVideoReady = false;
     private static boolean isRelatedVideoLoaded = false;
 
     private static GestureDetectorCompat mGestureDetectorCompat;
     private static boolean isNeedToMaximize = false;
-
-    private static Context context;
+    private Context context;
     private static Dialog downloadWindow;
-    private static TextView downloadWindowTitle;
-    private static TextView downloadWindowTime;
-
 
     private static getRelatedVideoData getData;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -145,26 +135,10 @@ public class WatchFragment extends Fragment {
     private String ChannelName;
     private String ChannelPic;
 
-    private static MotionLayout motionLayout;
-    private static HomeActivity homeActivity;
+
+    private HomeActivity homeActivity;
     private static CipherViewModel cipherViewModel;
 
-    private static RelativeLayout waiting_download_links_spinner_layout;
-    private static LinearLayout download_links_layout;
-    private static RelativeLayout p240;
-    private static RelativeLayout p360;
-    private static RelativeLayout p480;
-    private static RelativeLayout p720;
-    private static RelativeLayout p1080;
-    private static RelativeLayout p1440;
-    private static RelativeLayout k4;
-    private static TextView p240MbSize;
-    private static TextView p360MbSize;
-    private static TextView p480MbSize;
-    private static TextView p720MbSize;
-    private static TextView p1080MbSize;
-    private static TextView p1440MbSize;
-    private static TextView k4MbSize;
 
     private static boolean is4KFound = false;
     private static boolean is1440Found = false;
@@ -194,32 +168,6 @@ public class WatchFragment extends Fragment {
     private static String mediumDownloadLink;
     private static String largeDownloadLink;
 
-    private static RelativeLayout tiny;
-    private static RelativeLayout small;
-    private static RelativeLayout medium;
-    private static RelativeLayout large;
-    private static TextView tinyMbSize;
-    private static TextView smallMbSize;
-    private static TextView mediumMbSize;
-    private static TextView largeMbSize;
-    private static TextView tinyBitrateSize;
-    private static TextView smallBitrateSize;
-    private static TextView mediumBitrateSize;
-    private static TextView largeBitrateSize;
-
-    private static CardView k4Card;
-    private static CardView p1440Card;
-    private static CardView p1080Card;
-    private static CardView p720Card;
-    private static CardView p480Card;
-    private static CardView p360Card;
-    private static CardView p240Card;
-
-    private static CardView largeCard;
-    private static CardView mediumCard;
-    private static CardView smallCard;
-    private static CardView tinyCard;
-
     private static Activity activity;
     private static DecryptCipher decryptCipher;
 
@@ -227,13 +175,12 @@ public class WatchFragment extends Fragment {
     private static RelatedVideoAdapter relatedVideoAdapter;
     private static FavoriteViewModel favoriteViewModel;
     private static WatchVM watchVM;
-    private static View view;
-
-    private Boolean isArgumentsNull = true;
+    private View view;
 
 
+    public WatchFragment() {
+    }
 
-    public WatchFragment() {}
     public static WatchFragment newInstance(String param1, String param2) {
         WatchFragment fragment = new WatchFragment();
         Bundle args = new Bundle();
@@ -243,54 +190,14 @@ public class WatchFragment extends Fragment {
         return fragment;
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-////        if (getArguments() != null) {
-////            From = getArguments().getString("from");
-////            videoId = getArguments().getString("video_id");
-////            VideoThumbnail = getArguments().getString("video_thumbnail");
-////            VideoTitle = getArguments().getString("video_title");
-////            VideoViews = getArguments().getString("video_views");
-////            VideoDate = getArguments().getString("video_date");
-////            VideoTime = getArguments().getString("video_time");
-////            ChannelName = getArguments().getString("channel_name");
-////            ChannelPic = getArguments().getString("channel_pic");
-////            isArgumentsNull = false;
-////        }else {
-////            isArgumentsNull = true;
-////        }
-////
-////        //I Set Value true cause when back button pressed
-////        //I check Which Fragment is opened to close it
-////        homeActivity = (HomeActivity) getActivity();
-////        homeActivity.setWatchFragmentOpen(true);
-////
-////        cipherViewModel = new ViewModelProvider(
-////                this, ViewModelProvider
-////                .AndroidViewModelFactory
-////                .getInstance(getActivity()
-////                        .getApplication()))
-////                .get(CipherViewModel.class);
-////
-////        favoriteViewModel = new ViewModelProvider(
-////                this, ViewModelProvider
-////                .AndroidViewModelFactory
-////                .getInstance(getActivity().getApplication()))
-////                .get(FavoriteViewModel.class);
-////
-////        favoriteIndex = FavoriteIndex.getInstance();
-////
-////        activity = getActivity();
-//
-//
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup containerA, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         view = inflater.inflate(R.layout.fragment_watch, containerA, false);
+
+//        uiComponents = new UIComponents();
+        initializeUIComponents(view);
 
 
         homeActivity = (HomeActivity) getActivity();
@@ -303,21 +210,6 @@ public class WatchFragment extends Fragment {
 
 
         context = getActivity();
-        downloadWindow = new Dialog(context);
-
-        textTitle = view.findViewById(R.id.mainVideoTitle);
-        textViews = view.findViewById(R.id.viewsText);
-        textDate = view.findViewById(R.id.dateText);
-        TextView textChannelName = view.findViewById(R.id.channelName);
-        channelPic = view.findViewById(R.id.chennelPic);
-        heartPic = view.findViewById(R.id.addTofavo);
-        downloadPic = view.findViewById(R.id.download);
-        sharePic = view.findViewById(R.id.share);
-        titleSmallVersion = view.findViewById(R.id.title_small_version);
-
-        pauseImg = view.findViewById(R.id.pause_small);
-        closeImg = view.findViewById(R.id.close_small);
-        motionLayout = view.findViewById(R.id.watchVideoMotionLayout);
 
 
         //--------------------------------
@@ -332,9 +224,6 @@ public class WatchFragment extends Fragment {
             VideoTime = getArguments().getString("video_time");
             ChannelName = getArguments().getString("channel_name");
             ChannelPic = getArguments().getString("channel_pic");
-            isArgumentsNull = false;
-        }else {
-            isArgumentsNull = true;
         }
 
         //I Set Value true cause when back button pressed
@@ -377,9 +266,6 @@ public class WatchFragment extends Fragment {
         });
 
 
-
-
-
         //---------- I need to know why I added this part of code below
 //        //check if data come from Home feed
 //        if(From.equals("HomeFeed")){
@@ -408,33 +294,31 @@ public class WatchFragment extends Fragment {
 //            channelPicUrl = getIntent().getStringExtra("channel_pic");
 //        }
 
-        if(textTitle != null){
+        if (uiComponents.textTitle != null) {
             //pass data to the main video
-            titleSmallVersion.setText(VideoTitle);
-            textTitle.setText(VideoTitle);
-            textViews.setText(VideoViews);
-            textDate.setText(VideoDate);
-            textChannelName.setText(ChannelName);
+            uiComponents.titleSmallVersion.setText(VideoTitle);
+            uiComponents.textTitle.setText(VideoTitle);
+            uiComponents.textViews.setText(VideoViews);
+            uiComponents.textDate.setText(VideoDate);
+            uiComponents.textChannelName.setText(ChannelName);
             Picasso.get()
                     .load(ChannelName)
                     .transform(new CropCircleTransformation())
-                    .into(channelPic);
+                    .into(uiComponents.channelPic);
         }
 
 
         //----------------------------------------------------------------------------------------
         //ExoPlayer part -------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------
-        playerView = view.findViewById(R.id.video_view);
-        progressBar = view.findViewById(R.id.pB);
-        fullScreeen = view.findViewById(R.id.btn_fullscreen);
+
 
 //        player = new SimpleExoPlayer.Builder(activity).build();
         player = watchVM.getExoPlayer();
         int test = watchVM.getTest();
-        System.out.println("--------------- WatchVM Test: "+test);
-        System.out.println("--------------- WatchVM Player: "+player);
-        if (player == null ){
+        System.out.println("--------------- WatchVM Test: " + test);
+        System.out.println("--------------- WatchVM Player: " + player);
+        if (player == null) {
             player = new SimpleExoPlayer.Builder(activity).build();
             watchVM.setExoPlayer(player);
             watchVM.setTest(1);
@@ -442,7 +326,7 @@ public class WatchFragment extends Fragment {
 
         //get watch Stream link
         try {
-            downloadPic.setOnClickListener(new View.OnClickListener() {
+            uiComponents.downloadPic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     System.out.println("Download button clicked");
@@ -482,23 +366,24 @@ public class WatchFragment extends Fragment {
                             //video url
                             Uri videoUrl = Uri.parse(url);
 
-                            playerView.setPlayer(player);
-
+                            uiComponents.playerView.setPlayer(player);
                             //make video fit frame size
-                            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                            uiComponents.playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
                             //keep screen on
-                            playerView.setKeepScreenOn(true);
+                            uiComponents.playerView.setKeepScreenOn(true);
 
-                            if(test == 0){
+                            if (test == 0) {
                                 // Build the media item.
                                 MediaItem mediaItem = MediaItem.fromUri(videoUrl);
                                 // Set the media item to be played.
                                 player.setMediaItem(mediaItem);
                                 // Prepare the player.
                                 player.prepare();
-                                System.out.println("Preeeeeeeeeeeeeeeeer");
-                            }else {
-                                System.out.println("------------- Prer else");
+                            }
+
+                            if(watchVM.getWatchedTime() != 0){
+                                player.seekTo(watchVM.getWatchedTime());
+                                player.setPlayWhenReady(watchVM.isPlayState());
                             }
 
                             try {
@@ -516,18 +401,18 @@ public class WatchFragment extends Fragment {
                                     //check if video Still loading
                                     //to take action about progressbar if you should hide it or show it
                                     if (state == Player.STATE_BUFFERING) {
-                                        progressBar.setVisibility(View.VISIBLE);
+                                        uiComponents.progressBar.setVisibility(View.VISIBLE);
                                     } else if (state == Player.STATE_READY) {
-                                        progressBar.setVisibility(View.INVISIBLE);
+                                        uiComponents.progressBar.setVisibility(View.INVISIBLE);
                                         isVideoReady = true;
                                     }
-                                    progressBar.setAlpha(0);
+                                    uiComponents.progressBar.setAlpha(0);
                                 }
                             });
 
 
                             //full screen
-                            fullScreeen.setOnClickListener(new View.OnClickListener() {
+                            uiComponents.fullScreeen.setOnClickListener(new View.OnClickListener() {
                                 @SuppressLint("UseCompatLoadingForDrawables")
                                 @Override
                                 public void onClick(View view) {
@@ -560,7 +445,7 @@ public class WatchFragment extends Fragment {
 
                                     ViewGroup.LayoutParams params;
                                     if (screenState) {
-                                        fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen));
+                                        uiComponents.fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen));
                                         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                                         if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
                                             ((AppCompatActivity) getActivity()).getSupportActionBar().show();
@@ -568,17 +453,20 @@ public class WatchFragment extends Fragment {
                                         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                                         //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) playerView.getLayoutParams();
 //                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerView.getLayoutParams();
-                                        params =  playerView.getLayoutParams();
+                                        params = uiComponents.playerView.getLayoutParams();
 
                                         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                                         params.height = (int) (200 * getActivity().getResources().getDisplayMetrics().density);
-                                        playerView.setLayoutParams(params);
+                                        uiComponents.playerView.setLayoutParams(params);
                                         screenState = false;
 
 
                                         homeActivity.setBottomNaveVisibility(false);
+                                        watchVM.setLoadNewData(false);
+                                        watchVM.setWatchedTime(player.getCurrentPosition());
+                                        watchVM.setPlayState(player.getPlayWhenReady());
                                     } else {
-                                        fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen_exit));
+                                        uiComponents.fullScreeen.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen_exit));
                                         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
@@ -587,13 +475,16 @@ public class WatchFragment extends Fragment {
                                         }
                                         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-                                        params = playerView.getLayoutParams();
+                                        params = uiComponents.playerView.getLayoutParams();
 
                                         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                                         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                                        playerView.setLayoutParams(params);
+                                        uiComponents.playerView.setLayoutParams(params);
                                         screenState = true;
                                         homeActivity.setBottomNaveVisibility(true);
+                                        watchVM.setLoadNewData(false);
+                                        watchVM.setWatchedTime(player.getCurrentPosition());
+                                        watchVM.setPlayState(player.getPlayWhenReady());
                                     }
                                 }
                             });
@@ -629,115 +520,183 @@ public class WatchFragment extends Fragment {
 
 
         //Shimmer
-        ShimmerFrameLayout containerB =
-                view.findViewById(R.id.shimmer);
-        if(containerB != null){
-            containerB.startShimmer();
 
-            getData = new getRelatedVideoData(new RelatedResultCallBack() {
+        if (uiComponents.containerB != null) {
+            uiComponents.containerB.startShimmer();
+
+            if (watchVM.getLoadNewData()) {
+                getData = new getRelatedVideoData(new RelatedResultCallBack() {
+                    @Override
+                    public void result(List<VideoObject> videoData) {
+
+                        System.out.println("Data arrived");
+
+                        //start test ---------------------------------------------
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                watchVM.setVideoData(videoData);
+                                watchVM.setRelatedVideoData(getData);
+                                System.out.println("-----------\nI passed Data: " + getData.getVideoTitle().size());
+                                System.out.println("-----------\nWatchVM Data: " + watchVM.getRelatedVideoData().getVideoTitle().size());
+                                relatedVideos(videoData);
+                            }
+                        });
+
+                        //end of test --------------------------------------------
+                        isThereData = true;
+
+                    }
+                });
+                getData.execute("https://www.youtube.com/watch?v=" + videoId);
+            } else {
+                getData = watchVM.getRelatedVideoData();
+                relatedVideos(watchVM.getVideoData());
+            }
+
+
+            isThereData = false;
+
+            uiComponents.pauseImg.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void result(List<VideoObject> videoObjectList) {
+                public void onClick(View view) {
+                    if (player.isPlaying()) {
+                        player.pause();
+                        uiComponents.pauseImg.setImageResource(R.drawable.ic_play_small_version);
+                    } else {
+                        player.play();
+                        uiComponents.pauseImg.setImageResource(R.drawable.ic_pause_small_version);
+                    }
+                }
+            });
+            uiComponents.closeImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                    System.out.println("Data arrived");
+                    //Check if video playing make it pause before hide the layout
+                    if (player.isPlaying()) {
+                        player.pause();
+                    }
+                    //motionLayout.setAlpha(0);
+                    homeActivity.manager.resizeWatchFragment(0);
+                    uiComponents.motionLayout.setProgress((float) 0.0);
+                    isNeedToMaximize = false;
+                    homeActivity.frameLayoutVisibility();
 
-                    //start test ---------------------------------------------
+                    System.out.println("------ Close Button Clicked");
+                }
+            });
 
-                    activity.runOnUiThread(new Runnable() {
+            favoriteData();
+        }
 
+
+        return view;
+    }
+
+    private void relatedVideos(List<VideoObject> videoObjectList) {
+        uiComponents.containerB.stopShimmer();
+        uiComponents.containerB.setVisibility(View.GONE);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView recyclerView = view.findViewById(R.id.relatedVideoRecycle);
+        NestedScrollView nestedScrollView = view.findViewById(R.id.nested);
+        //
+        recyclerView.setFocusable(false);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        System.out.println("----------- Size of watch videoObjectList: " + videoObjectList.size());
+
+        relatedVideoAdapter = new RelatedVideoAdapter(videoObjectList, getData.getIsLive());
+
+        recyclerView.setAdapter(relatedVideoAdapter);
+
+        //Scrolling for new Related Videos Suggestions is not working I'll stop using it Until see where's the problem.
+        //if you want to activate it, change [stopWorking] to false
+        boolean stopWorking = true;
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight() & isRelatedVideoLoaded != true && !stopWorking) {
+
+                    System.out.println("77777777777777777777777777777777777");
+                    System.out.println("I'm in the last index");
+                    System.out.println("77777777777777777777777777777777777");
+                    isRelatedVideoLoaded = true;
+                    uiComponents.containerB.startShimmer();
+                    uiComponents.containerB.setVisibility(View.VISIBLE);
+
+                    int listSize = getData.getChannelImgUrl().size();
+                    getRelatedVideoData.moreData();
+
+                    Timer timer1 = new Timer();
+                    timer1.schedule(new TimerTask() {
                         @Override
                         public void run() {
+                            System.out.println("note yet");
+                            if (listSize < getData.getBadgeIcon().size()) {
 
-                            containerB.stopShimmer();
-                            containerB.setVisibility(View.GONE);
-
-
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                            RecyclerView recyclerView = view.findViewById(R.id.relatedVideoRecycle);
-                            NestedScrollView nestedScrollView = view.findViewById(R.id.nested);
-                            //
-                            recyclerView.setFocusable(false);
-                            recyclerView.setNestedScrollingEnabled(false);
-                            recyclerView.setLayoutManager(linearLayoutManager);
-
-                            System.out.println("----------- Size of watch videoObjectList: " + videoObjectList.size());
-
-                            relatedVideoAdapter = new RelatedVideoAdapter(videoObjectList, getData.getIsLive());
-
-                            recyclerView.setAdapter(relatedVideoAdapter);
-
-                            nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                                @Override
-                                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight() & isRelatedVideoLoaded != true) {
-
-                                        System.out.println("77777777777777777777777777777777777");
-                                        System.out.println("I'm in the last index");
-                                        System.out.println("77777777777777777777777777777777777");
-                                        isRelatedVideoLoaded = true;
-                                        containerB.startShimmer();
-                                        containerB.setVisibility(View.VISIBLE);
-
-                                        int listSize = getData.getChannelImgUrl().size();
-                                        getRelatedVideoData.moreData();
-
-                                        Timer timer1 = new Timer();
-                                        timer1.schedule(new TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                System.out.println("note yet");
-                                                if (listSize < getData.getBadgeIcon().size()) {
-
-                                                    getActivity().runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            // Stuff that updates the UI
-                                                            System.out.println("I get data");
-                                                            System.out.println("orignal list size: " + listSize);
-                                                            System.out.println("current list size: " + getData.getChannelImgUrl().size());
-                                                            int rr = getData.getChannelImgUrl().size() - listSize;
-                                                            System.out.println("how many data added: " + rr);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Stuff that updates the UI
+                                        System.out.println("I get data");
+                                        System.out.println("orignal list size: " + listSize);
+                                        System.out.println("current list size: " + getData.getChannelImgUrl().size());
+                                        int rr = getData.getChannelImgUrl().size() - listSize;
+                                        System.out.println("how many data added: " + rr);
 
 
-                                                            //relatedVideoAdapter.notifyDataSetChanged();
-                                                            //notifyItemRangeInserted(insertIndex, items.size());
-                                                            containerB.stopShimmer();
-                                                            containerB.setVisibility(View.GONE);
-
-                                                            relatedVideoAdapter.notifyItemRangeInserted(getData.getVideoId().size(), getData.getVideoId().size() - listSize);
-                                                            isRelatedVideoLoaded = false;
-                                                        }
-                                                    });
-                                                    timer1.cancel();
-                                                }
-                                            }
-                                        }, 0, 1000);
                                         //relatedVideoAdapter.notifyDataSetChanged();
+                                        //notifyItemRangeInserted(insertIndex, items.size());
+                                        uiComponents.containerB.stopShimmer();
+                                        uiComponents.containerB.setVisibility(View.GONE);
 
+                                        relatedVideoAdapter.notifyItemRangeInserted(getData.getVideoId().size(), getData.getVideoId().size() - listSize);
+                                        isRelatedVideoLoaded = false;
                                     }
-                                }
-                            });
+                                });
+                                timer1.cancel();
+                            }
+                        }
+                    }, 0, 1000);
+                    //relatedVideoAdapter.notifyDataSetChanged();
 
-                            relatedVideoAdapter.setOnItemClickListener(new RelatedVideoAdapter.onItemClickListener() {
-                                @Override
-                                public void onHeartClick(int position) {
-                                    //
-                                    addToFavorite(videoObjectList.get(position));
-                                }
+                }
+            }
+        });
 
-                                @Override
-                                public void onItemClick(int position) {
-                                    //System.out.println(getData.getVideoTitle().get(position));
-                                    if (getData.getVideoTitle().size() != 0) {
-                                        //System.out.println("You clicked on me: "+ getData.getVideoId().get(position));
+        relatedVideoAdapter.setOnItemClickListener(new RelatedVideoAdapter.onItemClickListener() {
+            @Override
+            public void onHeartClick(int position) {
+                //
+                addToFavorite(videoObjectList.get(position));
+            }
+
+            @Override
+            public void onItemClick(int position) {
+                //System.out.println(getData.getVideoTitle().get(position));
+                //videoObjectList
+                //getData.getVideoTitle().size() != 0
+                if (videoObjectList.size() != 0) {
+                    //System.out.println("You clicked on me: "+ getData.getVideoId().get(position));
+                    List<VideoObject> data = new ArrayList<>(videoObjectList);
+                    player.release();
 
 
-                                        if (isVideoReady) {
-                                            //playerView.onPause();
-                                            player.stop(true);
-                                            player.clearMediaItems();
-                                        }
+                    watchVM.setLoadNewData(true);
+                    watchVM.getVideoData().clear();
 
-                                        //refresh activity with new data by starting new intent
+
+                    if (isVideoReady) {
+                        //playerView.onPause();
+                        player.stop(true);
+                        player.clearMediaItems();
+                    }
+
+                    //refresh activity with new data by starting new intent
 //                                        Intent intent = new Intent(getActivity(), watch.class);
 //                                        intent.putExtra("from", "Watch");
 //                                        intent.putExtra("video_id", getData.getVideoId().get(position));
@@ -749,7 +708,7 @@ public class WatchFragment extends Fragment {
 //                                        intent.putExtra("channel_name", getData.getChannelName().get(position));
 //                                        intent.putExtra("channel_pic",  getData.getChannelImgUrl().get(position));
 
-                                        //clear data
+                    //clear data
 //                                        getData.getVideoId().clear();
 //                                        getData.getThumbnailUrl().clear();
 //                                        getData.getVideoTitle().clear();
@@ -768,80 +727,110 @@ public class WatchFragment extends Fragment {
 //                                        getActivity().finish();
 
 
-                                        openWatchFragment(position);
 
-                                    }
+                    openWatchFragment(position, data);
 
-                                }
+                } else {
+                    System.out.println("-------------------------\nThere's No Data In [getData]\nTitle Size: " + getData.getVideoTitle().size());
+                    System.out.println("-------------------------\nWatchVM Title Size: " + watchVM.getRelatedVideoData().getVideoTitle().size());
+                }
 
-                                @Override
-                                public void onDownloadClick(int position) {
-                                    if (HomeActivity.isPermission) {
-                                        getVideoStreamLink downloadUrls = new getVideoStreamLink(activity, new FetchDownloadingLinksCallback() {
-                                            @Override
-                                            public void callback(List<VideoStreamObject> videoStreamObjectList) {
-                                                //
-                                                System.out.println("------- Down Called");
-                                                generateDownloadingOption(videoObjectList.get(position), videoStreamObjectList);
-                                            }
-                                        });
-                                        downloadUrls.execute("https://www.youtube.com/watch?v=" + videoObjectList.get(position).getVideoId());
-                                        createDownloadDialog(new VideoObject(getData.getVideoId().get(position), getData.getVideoTitle().get(position), "", getData.getShowTime().get(position), "", "", false, getData.getThumbnailUrl().get(position), ""));
-                                    } else {
-                                        Toast.makeText(getContext(), R.string.StorageMsg, Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+            }
 
+            @Override
+            public void onDownloadClick(int position) {
+                if (HomeActivity.isPermission) {
+                    getVideoStreamLink downloadUrls = new getVideoStreamLink(activity, new FetchDownloadingLinksCallback() {
+                        @Override
+                        public void callback(List<VideoStreamObject> videoStreamObjectList) {
+                            //
+                            System.out.println("------- Down Called");
+                            generateDownloadingOption(videoObjectList.get(position), videoStreamObjectList);
                         }
                     });
-
-                    //end of test --------------------------------------------
-                    isThereData = true;
-
+                    downloadUrls.execute("https://www.youtube.com/watch?v=" + videoObjectList.get(position).getVideoId());
+                    createDownloadDialog(new VideoObject(getData.getVideoId().get(position), getData.getVideoTitle().get(position), "", getData.getShowTime().get(position), "", "", false, getData.getThumbnailUrl().get(position), ""));
+                } else {
+                    Toast.makeText(getContext(), R.string.StorageMsg, Toast.LENGTH_LONG).show();
                 }
-            });
-            getData.execute("https://www.youtube.com/watch?v=" + videoId);
+            }
+        });
+    }
 
+    private void initializeUIComponents(View view) {
+        downloadWindow = new Dialog(getActivity());
 
-            isThereData = false;
+        uiComponents.containerB = view.findViewById(R.id.shimmer);
 
-            pauseImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (player.isPlaying()) {
-                        player.pause();
-                        pauseImg.setImageResource(R.drawable.ic_play_small_version);
-                    } else {
-                        player.play();
-                        pauseImg.setImageResource(R.drawable.ic_pause_small_version);
-                    }
-                }
-            });
-            closeImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        uiComponents.textTitle = view.findViewById(R.id.mainVideoTitle);
+        uiComponents.textViews = view.findViewById(R.id.viewsText);
+        uiComponents.textDate = view.findViewById(R.id.dateText);
+        uiComponents.titleSmallVersion = view.findViewById(R.id.title_small_version);
 
-                    //Check if video playing make it pause before hide the layout
-                    if (player.isPlaying()) {
-                        player.pause();
-                    }
-                    //motionLayout.setAlpha(0);
-                    ((HomeActivity) getActivity()).manager.resizeWatchFragment(0);
-                    motionLayout.setProgress((float) 0.0);
-                    isNeedToMaximize = false;
-                    ((HomeActivity) getActivity()).frameLayoutVisibility();
+        uiComponents.textChannelName = view.findViewById(R.id.channelName);
+        uiComponents.channelPic = view.findViewById(R.id.chennelPic);
+        uiComponents.heartPic = view.findViewById(R.id.addTofavo);
+        uiComponents.downloadPic = view.findViewById(R.id.download);
+        uiComponents.sharePic = view.findViewById(R.id.share);
 
-                    System.out.println("------ Close Button Clicked");
-                }
-            });
+        uiComponents.pauseImg = view.findViewById(R.id.pause_small);
+        uiComponents.closeImg = view.findViewById(R.id.close_small);
+        uiComponents.motionLayout = view.findViewById(R.id.watchVideoMotionLayout);
 
-            favoriteData();
-        }
+        uiComponents.playerView = view.findViewById(R.id.video_view);
+        uiComponents.progressBar = view.findViewById(R.id.pB);
+        uiComponents.fullScreeen = view.findViewById(R.id.btn_fullscreen);
 
+        uiComponents.downloadWindowThumbnail = downloadWindow.findViewById(R.id.thumbnailRoundedImageView);
+        uiComponents.downloadWindowTitle = downloadWindow.findViewById(R.id.titleOfDownloadFile);
+        uiComponents.downloadWindowTime = downloadWindow.findViewById(R.id.downloadTime);
 
+        uiComponents.waiting_download_links_spinner_layout = downloadWindow.findViewById(R.id.waiting_download_links_spinner_layout);
+        uiComponents.download_links_layout = downloadWindow.findViewById(R.id.download_links_layout);
 
-        return view;
+        uiComponents.p240Card = downloadWindow.findViewById(R.id.p240Card);
+        uiComponents.p360Card = downloadWindow.findViewById(R.id.p360Card);
+        uiComponents.p480Card = downloadWindow.findViewById(R.id.p480Card);
+        uiComponents.p720Card = downloadWindow.findViewById(R.id.p720Card);
+        uiComponents.p1080Card = downloadWindow.findViewById(R.id.p1080Card);
+        uiComponents.p1440Card = downloadWindow.findViewById(R.id.p1440Card);
+        uiComponents.k4Card = downloadWindow.findViewById(R.id.k4Card);
+
+        uiComponents.p240 = downloadWindow.findViewById(R.id.p240);
+        uiComponents.p360 = downloadWindow.findViewById(R.id.p360);
+        uiComponents.p480 = downloadWindow.findViewById(R.id.p480);
+        uiComponents.p720 = downloadWindow.findViewById(R.id.p720);
+        uiComponents.p1080 = downloadWindow.findViewById(R.id.p1080);
+        uiComponents.p1440 = downloadWindow.findViewById(R.id.p1440);
+        uiComponents.k4 = downloadWindow.findViewById(R.id.k4);
+
+        uiComponents.p240MbSize = downloadWindow.findViewById(R.id.p240MbSize);
+        uiComponents.p360MbSize = downloadWindow.findViewById(R.id.p360MbSize);
+        uiComponents.p480MbSize = downloadWindow.findViewById(R.id.p480MbSize);
+        uiComponents.p720MbSize = downloadWindow.findViewById(R.id.p720MSize);
+        uiComponents.p1080MbSize = downloadWindow.findViewById(R.id.p1080MbSize);
+        uiComponents.p1440MbSize = downloadWindow.findViewById(R.id.p1440MbSize);
+        uiComponents.k4MbSize = downloadWindow.findViewById(R.id.k4MbSize);
+
+        uiComponents.tinyCard = downloadWindow.findViewById(R.id.tinyCard);
+        uiComponents.smallCard = downloadWindow.findViewById(R.id.smallCard);
+        uiComponents.mediumCard = downloadWindow.findViewById(R.id.mediumCard);
+        uiComponents.largeCard = downloadWindow.findViewById(R.id.largCard);
+
+        uiComponents.tiny = downloadWindow.findViewById(R.id.tiny);
+        uiComponents.small = downloadWindow.findViewById(R.id.small);
+        uiComponents.medium = downloadWindow.findViewById(R.id.medium);
+        uiComponents.large = downloadWindow.findViewById(R.id.large);
+
+        uiComponents.tinyMbSize = downloadWindow.findViewById(R.id.tinyMbSize);
+        uiComponents.smallMbSize = downloadWindow.findViewById(R.id.smallMbSize);
+        uiComponents.mediumMbSize = downloadWindow.findViewById(R.id.mediumMbSize);
+        uiComponents.largeMbSize = downloadWindow.findViewById(R.id.largeMbSize);
+
+        uiComponents.tinyBitrateSize = downloadWindow.findViewById(R.id.tinyBiterateSize);
+        uiComponents.smallBitrateSize = downloadWindow.findViewById(R.id.smallBiterateSize);
+        uiComponents.mediumBitrateSize = downloadWindow.findViewById(R.id.mediumBiterateSize);
+        uiComponents.largeBitrateSize = downloadWindow.findViewById(R.id.largeBitrateSize);
     }
 
     private void favoriteData() {
@@ -880,9 +869,9 @@ public class WatchFragment extends Fragment {
      */
     private void checkVideoStatue() {
         if (player.isPlaying()) {
-            pauseImg.setImageResource(R.drawable.ic_pause_small_version);
+            uiComponents.pauseImg.setImageResource(R.drawable.ic_pause_small_version);
         } else {
-            pauseImg.setImageResource(R.drawable.ic_play_small_version);
+            uiComponents.pauseImg.setImageResource(R.drawable.ic_play_small_version);
         }
     }
 
@@ -926,17 +915,17 @@ public class WatchFragment extends Fragment {
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int i) {
                 if (motionLayout.getProgress() == 1.0) {
-                    ((HomeActivity) getActivity()).manager.resizeWatchFragment(1);
-                    playerView.hideController();
-                    playerView.setUseController(false);
+                    homeActivity.manager.resizeWatchFragment(1);
+                    uiComponents.playerView.hideController();
+                    uiComponents.playerView.setUseController(false);
                     checkVideoStatue();
                     isNeedToMaximize = true;
 
                     homeActivity.setWatchFragmentOpen(false);
                 } else {
-                    playerView.setUseController(true);
+                    uiComponents.playerView.setUseController(true);
                     if (isNeedToMaximize) {
-                        ((HomeActivity) getActivity()).manager.resizeWatchFragment(0);
+                        homeActivity.manager.resizeWatchFragment(0);
                     }
                     homeActivity.setWatchFragmentOpen(true);
                 }
@@ -960,7 +949,7 @@ public class WatchFragment extends Fragment {
         }
     }
 
-    private void openWatchFragment(int position) {
+    private void openWatchFragment(int position, List<VideoObject> videoObjectList) {
         //Open Watch Fragment
 
         WatchFragment watchFragment = new WatchFragment();
@@ -968,10 +957,15 @@ public class WatchFragment extends Fragment {
         /**Check from where data come to pass it in the right way.
          * there are two source of data the first one is Trending videos and the second one is the Recommended videos**/
 
-        sendData(watchFragment, getData.getVideoId().get(position), getData.getThumbnailUrl().get(position)
-                , getData.getVideoTitle().get(position), getData.getViewsInfo().get(position)
-                , getData.getDateInfo().get(position), getData.getShowTime().get(position)
-                , getData.getChannelName().get(position), getData.getChannelImgUrl().get(position));
+//        sendData(watchFragment, getData.getVideoId().get(position), getData.getThumbnailUrl().get(position)
+//                , getData.getVideoTitle().get(position), getData.getViewsInfo().get(position)
+//                , getData.getDateInfo().get(position), getData.getShowTime().get(position)
+//                , getData.getChannelName().get(position), getData.getChannelImgUrl().get(position));
+
+        sendData(watchFragment, videoObjectList.get(position).getVideoId(), videoObjectList.get(position).getThumbnail()
+                , videoObjectList.get(position).getTitle(), videoObjectList.get(position).getViews()
+                , videoObjectList.get(position).getDate(), videoObjectList.get(position).getTime()
+                , videoObjectList.get(position).getBy(), videoObjectList.get(position).getChannelThumbnail());
 
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -996,7 +990,7 @@ public class WatchFragment extends Fragment {
     }
 
     public void minimize() {
-        motionLayout.transitionToEnd();
+        uiComponents.motionLayout.transitionToEnd();
     }
 
     @Override
@@ -1027,65 +1021,15 @@ public class WatchFragment extends Fragment {
     //downloading part
     private void createDownloadDialog(VideoObject videoList) {
         downloadWindow.setContentView(R.layout.my_dialog);
-        downloadWindowThumbnail = downloadWindow.findViewById(R.id.thumbnailRoundedImageView);
-        downloadWindowTitle = downloadWindow.findViewById(R.id.titleOfDownloadFile);
-        downloadWindowTime = downloadWindow.findViewById(R.id.downloadTime);
-
-        waiting_download_links_spinner_layout = downloadWindow.findViewById(R.id.waiting_download_links_spinner_layout);
-        download_links_layout = downloadWindow.findViewById(R.id.download_links_layout);
-
-        p240Card = downloadWindow.findViewById(R.id.p240Card);
-        p360Card = downloadWindow.findViewById(R.id.p360Card);
-        p480Card = downloadWindow.findViewById(R.id.p480Card);
-        p720Card = downloadWindow.findViewById(R.id.p720Card);
-        p1080Card = downloadWindow.findViewById(R.id.p1080Card);
-        p1440Card = downloadWindow.findViewById(R.id.p1440Card);
-        k4Card = downloadWindow.findViewById(R.id.k4Card);
-
-        p240 = downloadWindow.findViewById(R.id.p240);
-        p360 = downloadWindow.findViewById(R.id.p360);
-        p480 = downloadWindow.findViewById(R.id.p480);
-        p720 = downloadWindow.findViewById(R.id.p720);
-        p1080 = downloadWindow.findViewById(R.id.p1080);
-        p1440 = downloadWindow.findViewById(R.id.p1440);
-        k4 = downloadWindow.findViewById(R.id.k4);
-
-        p240MbSize = downloadWindow.findViewById(R.id.p240MbSize);
-        p360MbSize = downloadWindow.findViewById(R.id.p360MbSize);
-        p480MbSize = downloadWindow.findViewById(R.id.p480MbSize);
-        p720MbSize = downloadWindow.findViewById(R.id.p720MSize);
-        p1080MbSize = downloadWindow.findViewById(R.id.p1080MbSize);
-        p1440MbSize = downloadWindow.findViewById(R.id.p1440MbSize);
-        k4MbSize = downloadWindow.findViewById(R.id.k4MbSize);
-
-        tinyCard = downloadWindow.findViewById(R.id.tinyCard);
-        smallCard = downloadWindow.findViewById(R.id.smallCard);
-        mediumCard = downloadWindow.findViewById(R.id.mediumCard);
-        largeCard = downloadWindow.findViewById(R.id.largCard);
-
-        tiny = downloadWindow.findViewById(R.id.tiny);
-        small = downloadWindow.findViewById(R.id.small);
-        medium = downloadWindow.findViewById(R.id.medium);
-        large = downloadWindow.findViewById(R.id.large);
-
-        tinyMbSize = downloadWindow.findViewById(R.id.tinyMbSize);
-        smallMbSize = downloadWindow.findViewById(R.id.smallMbSize);
-        mediumMbSize = downloadWindow.findViewById(R.id.mediumMbSize);
-        largeMbSize = downloadWindow.findViewById(R.id.largeMbSize);
-
-        tinyBitrateSize = downloadWindow.findViewById(R.id.tinyBiterateSize);
-        smallBitrateSize = downloadWindow.findViewById(R.id.smallBiterateSize);
-        mediumBitrateSize = downloadWindow.findViewById(R.id.mediumBiterateSize);
-        largeBitrateSize = downloadWindow.findViewById(R.id.largeBitrateSize);
 
 
         Picasso.get()
                 .load(videoList.getThumbnail())
                 .centerCrop()
                 .fit()
-                .into(downloadWindowThumbnail);
-        downloadWindowTitle.setText(videoList.getTitle());
-        downloadWindowTime.setText(videoList.getTime());
+                .into(uiComponents.downloadWindowThumbnail);
+        uiComponents.downloadWindowTitle.setText(videoList.getTitle());
+        uiComponents.downloadWindowTime.setText(videoList.getTime());
 
         downloadWindow.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         downloadWindow.show();
@@ -1140,87 +1084,87 @@ public class WatchFragment extends Fragment {
 
         System.out.println("Faltering .... " + "Quality: " + quality);
         //hd2160
-        if (is4KFound != true) {
+        if (!is4KFound) {
             k4DownloadLink = downloadLink;
             if (quality.equals("hd2160")) {
-                k4.setVisibility(View.VISIBLE);
+                uiComponents.k4.setVisibility(View.VISIBLE);
                 is4KFound = true;
-                k4MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.k4MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                k4.setVisibility(View.GONE);
+                uiComponents.k4.setVisibility(View.GONE);
             }
         }
         //hd1440
-        if (is1440Found != true) {
+        if (!is1440Found) {
             if (quality.equals("hd1440")) {
                 p1440DownloadLink = downloadLink;
-                p1440.setVisibility(View.VISIBLE);
+                uiComponents.p1440.setVisibility(View.VISIBLE);
                 is1440Found = true;
-                p1440MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p1440MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p1440.setVisibility(View.GONE);
+                uiComponents.p1440.setVisibility(View.GONE);
             }
         }
         //hd1080
-        if (is1080Found != true) {
+        if (!is1080Found) {
             if (quality.equals("hd1080")) {
                 p1080DownloadLink = downloadLink;
-                p1080.setVisibility(View.VISIBLE);
+                uiComponents.p1080.setVisibility(View.VISIBLE);
                 is1080Found = true;
-                p1080MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p1080MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p1080.setVisibility(View.GONE);
+                uiComponents.p1080.setVisibility(View.GONE);
             }
         }
         //hd720
-        if (is720Found != true) {
+        if (!is720Found) {
             if (quality.equals("hd720")) {
                 p720DownloadLink = downloadLink;
-                p720.setVisibility(View.VISIBLE);
+                uiComponents.p720.setVisibility(View.VISIBLE);
                 is720Found = true;
-                p720MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p720MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p720.setVisibility(View.GONE);
+                uiComponents.p720.setVisibility(View.GONE);
             }
         }
         //480p
-        if (is480Found != true) {
+        if (!is480Found) {
             if (quality.equals("large")) {
                 p480DownloadLink = downloadLink;
-                p480.setVisibility(View.VISIBLE);
+                uiComponents.p480.setVisibility(View.VISIBLE);
                 is480Found = true;
-                p480MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p480MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p480.setVisibility(View.GONE);
+                uiComponents.p480.setVisibility(View.GONE);
             }
         }
         //360p
-        if (is360Found != true) {
+        if (!is360Found) {
             if (quality.equals("medium")) {
                 p360DownloadLink = downloadLink;
-                p360.setVisibility(View.VISIBLE);
+                uiComponents.p360.setVisibility(View.VISIBLE);
                 is360Found = true;
-                p360MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p360MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p360.setVisibility(View.GONE);
+                uiComponents.p360.setVisibility(View.GONE);
             }
         }
         //240p
-        if (is240Found != true) {
+        if (!is240Found) {
             if (quality.equals("small")) {
                 p240DownloadLink = downloadLink;
-                p240.setVisibility(View.VISIBLE);
+                uiComponents.p240.setVisibility(View.VISIBLE);
                 is240Found = true;
-                p240MbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.p240MbSize.setText(String.format("%.2f", fileSize) + "MB");
                 return;
             } else {
-                p240.setVisibility(View.GONE);
+                uiComponents.p240.setVisibility(View.GONE);
             }
         }
 
@@ -1232,32 +1176,32 @@ public class WatchFragment extends Fragment {
             aacDownloadLink = downloadLink;
         }
         //Large
-        if (isLargeFound != true & audioType.contains("audio")) {
+        if (!isLargeFound & audioType.contains("audio")) {
             largeDownloadLink = downloadLink;
             isLargeFound = true;
-            largeMbSize.setText(String.format("%.2f", fileSize) + "MB");
-            largeBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
+            uiComponents.largeMbSize.setText(String.format("%.2f", fileSize) + "MB");
+            uiComponents.largeBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
         } else {
             //Medium
-            if (isMediumFound != true & audioType.contains("audio")) {
+            if (!isMediumFound & audioType.contains("audio")) {
                 mediumDownloadLink = downloadLink;
                 isMediumFound = true;
-                mediumMbSize.setText(String.format("%.2f", fileSize) + "MB");
-                mediumBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
+                uiComponents.mediumMbSize.setText(String.format("%.2f", fileSize) + "MB");
+                uiComponents.mediumBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
             } else {
                 //Small
-                if (isSmallFound != true & audioType.contains("audio")) {
+                if (!isSmallFound & audioType.contains("audio")) {
                     smallDownloadLink = downloadLink;
                     isSmallFound = true;
-                    smallMbSize.setText(String.format("%.2f", fileSize) + "MB");
-                    smallBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
+                    uiComponents.smallMbSize.setText(String.format("%.2f", fileSize) + "MB");
+                    uiComponents.smallBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
                 } else {
                     //Tiny
-                    if (isTinyFound != true & audioType.contains("audio")) {
+                    if (!isTinyFound & audioType.contains("audio")) {
                         tinyDownloadLink = downloadLink;
                         isTinyFound = true;
-                        tinyMbSize.setText(String.format("%.2f", fileSize) + "MB");
-                        tinyBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
+                        uiComponents.tinyMbSize.setText(String.format("%.2f", fileSize) + "MB");
+                        uiComponents.tinyBitrateSize.setText("MP3 " + String.format("%.0f", bitRate) + "K");
                     }
                 }
             }
@@ -1267,12 +1211,12 @@ public class WatchFragment extends Fragment {
     }
 
     private void optionButtonsListener(VideoObject videoObject) {
-        waiting_download_links_spinner_layout.setVisibility(View.GONE);
-        download_links_layout.setVisibility(View.VISIBLE);
+        uiComponents.waiting_download_links_spinner_layout.setVisibility(View.GONE);
+        uiComponents.download_links_layout.setVisibility(View.VISIBLE);
 
 
         //Video part
-        k4Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.k4Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Clicked on 4K Card");
@@ -1309,7 +1253,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p1080Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p1080Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (p1080DownloadLink != null) {
@@ -1345,7 +1289,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p1440Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p1440Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (p1440DownloadLink != null) {
@@ -1381,7 +1325,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p720Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p720Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Clicked on 4K Card");
@@ -1418,7 +1362,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p480Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p480Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Clicked on 4K Card");
@@ -1455,7 +1399,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p360Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p360Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Clicked on 4K Card");
@@ -1492,7 +1436,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        p240Card.setOnClickListener(new View.OnClickListener() {
+        uiComponents.p240Card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (p240DownloadLink != null) {
@@ -1529,7 +1473,7 @@ public class WatchFragment extends Fragment {
         });
 
         //Audio Part
-        largeCard.setOnClickListener(new View.OnClickListener() {
+        uiComponents.largeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (largeDownloadLink != null) {
@@ -1563,7 +1507,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        mediumCard.setOnClickListener(new View.OnClickListener() {
+        uiComponents.mediumCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mediumDownloadLink != null) {
@@ -1597,7 +1541,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        smallCard.setOnClickListener(new View.OnClickListener() {
+        uiComponents.smallCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (smallDownloadLink != null) {
@@ -1631,7 +1575,7 @@ public class WatchFragment extends Fragment {
             }
         });
         //
-        tinyCard.setOnClickListener(new View.OnClickListener() {
+        uiComponents.tinyCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (tinyDownloadLink != null) {
